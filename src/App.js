@@ -1,13 +1,8 @@
 import { Component } from "react";
-import { v4 as uuidv4 } from "uuid";
 import ContactForm from "./Components/ContactForm/ContactForm";
 import ContactsList from "./Components/ContactsList/ContactsList";
 import Filter from "./Components/Filter/Filter";
-
-const INITIAL_STATE = {
-  name: "",
-  number: "",
-};
+import "./App.css";
 
 class App extends Component {
   state = {
@@ -18,54 +13,60 @@ class App extends Component {
       { id: "id-4", name: "Annie Copeland", number: "227-91-26" },
     ],
     filter: "",
-    ...INITIAL_STATE,
   };
 
-  handleChange = ({ target }) => {
-    const { name, value } = target;
-
-    this.setState({ [name]: value });
+  addContact = (contact) => {
+    if (this.sameName(contact)) {
+      return;
+    } else {
+      this.setState((prevState) => ({
+        contacts: [contact, ...prevState.contacts],
+      }));
+    }
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
+  handleRemove = (id) => {
     this.setState((prevState) => ({
-      contacts: [
-        ...prevState.contacts,
-        {
-          name: this.state.name,
-          number: this.state.number,
-          id: uuidv4(),
-        },
-      ],
+      contacts: prevState.contacts.filter((contact) => contact.id !== id),
     }));
-    this.reset();
   };
 
-  reset = () => {
-    this.setState({ ...INITIAL_STATE });
+  changeFilter = (e) => {
+    this.setState({ filter: e.target.value });
   };
 
-  // getVisibleContacts = () => {
-  //   const { filter, contacts } = this.state;
-  //   const normalizedFilter = filter.toLowerCase();
-  //   return contacts.filter((contact) =>
-  //     contact.text.toLowerCase().includes(normalizedFilter)
-  //   );
-  // };
+  getVisibleContacts = () => {
+    const { filter, contacts } = this.state;
+    const normalizedFilter = filter.toLowerCase();
+
+    return contacts.filter((contact) => {
+      return contact.name.toLowerCase().includes(normalizedFilter);
+    });
+  };
+
+  sameName = (contactName) => {
+    const { contacts } = this.state;
+    contacts.map((contact) => {
+      if (contact.name === contactName.name) {
+        alert(`${contactName.name} is already in contacts`);
+      }
+      return contact;
+    });
+  };
 
   render() {
-    // const visibleContacts = this.getVisibleContacts();
+    const { filter } = this.state;
+    const visibleContacts = this.getVisibleContacts();
     return (
-      <div>
-        <h1>Phonebook</h1>
-        <ContactForm
-          handleSubmit={this.handleSubmit}
-          handleChange={this.handleChange}
+      <div className="container">
+        <h1 className="mainTitle">Phonebook</h1>
+        <ContactForm handleSubmit={this.addContact} />
+        <h2 className="contactsTitle">Contacts</h2>
+        <Filter value={filter} onChange={this.changeFilter} />
+        <ContactsList
+          contactsList={visibleContacts}
+          handleRemove={this.handleRemove}
         />
-        <h2>Contacts</h2>
-        <Filter handleChange={this.handleChange} />
-        <ContactsList contactsList={this.state.contacts} />
       </div>
     );
   }
