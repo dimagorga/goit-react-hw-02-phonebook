@@ -1,16 +1,16 @@
 import PropTypes from "prop-types";
 import s from "./Button.module.css";
-function Button({ type, buttonName, handleClick }) {
+function Button({ type, buttonName, handleClick, id }) {
   return (
-    <button className={s.button} onClick={handleClick} type={type}>
+    <button className={s.button} onClick={handleClick} id={id} type={type}>
       {buttonName}
     </button>
   );
 }
 
 Button.propTypes = {
-  type: PropTypes.array,
-  buttonName: PropTypes.array,
+  type: PropTypes.string,
+  buttonName: PropTypes.string,
   handleClick: PropTypes.func,
 };
 

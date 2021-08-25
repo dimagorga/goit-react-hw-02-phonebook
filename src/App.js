@@ -15,12 +15,16 @@ class App extends Component {
     filter: "",
   };
 
-  addContact = (contact) => {
-    if (this.sameName(contact)) {
-      return;
+  addContact = (nextContact) => {
+    const { contacts } = this.state;
+    const sameName = contacts
+      .map((contact) => contact.name.toLocaleLowerCase())
+      .includes(nextContact.name.toLocaleLowerCase());
+    if (sameName) {
+      alert(`${nextContact.name} is already in contacts`);
     } else {
       this.setState((prevState) => ({
-        contacts: [contact, ...prevState.contacts],
+        contacts: [nextContact, ...prevState.contacts],
       }));
     }
   };
@@ -38,19 +42,8 @@ class App extends Component {
   getVisibleContacts = () => {
     const { filter, contacts } = this.state;
     const normalizedFilter = filter.toLowerCase();
-
     return contacts.filter((contact) => {
       return contact.name.toLowerCase().includes(normalizedFilter);
-    });
-  };
-
-  sameName = (contactName) => {
-    const { contacts } = this.state;
-    contacts.map((contact) => {
-      if (contact.name === contactName.name) {
-        alert(`${contactName.name} is already in contacts`);
-      }
-      return contact;
     });
   };
 
