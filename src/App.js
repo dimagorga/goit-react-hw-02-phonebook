@@ -17,9 +17,11 @@ class App extends Component {
 
   addContact = (nextContact) => {
     const { contacts } = this.state;
-    const sameName = contacts
-      .map((contact) => contact.name.toLocaleLowerCase())
-      .includes(nextContact.name.toLocaleLowerCase());
+    const sameName = contacts.some(
+      (contact) =>
+        contact.name.toLocaleLowerCase() ===
+        nextContact.name.toLocaleLowerCase()
+    );
     if (sameName) {
       alert(`${nextContact.name} is already in contacts`);
     } else {
